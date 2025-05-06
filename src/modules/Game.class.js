@@ -40,29 +40,48 @@ class Game {
   }
 
   moveLeft() {
-    this.handleMove(this.board, false);
+    const changed = this.handleMove(this.board, false);
+
+    if (changed) {
+      this.addRandomTile();
+      this.checkGameOver();
+    }
   }
 
   moveRight() {
-    this.handleMove(this.board, true);
+    const changed = this.handleMove(this.board, true);
+
+    if (changed) {
+      this.addRandomTile();
+      this.checkGameOver();
+    }
   }
 
   moveUp() {
     const transposed = this.transpose(this.board);
+    const changed = this.handleMove(transposed, false);
 
-    this.handleMove(transposed, false);
-    this.board = this.transpose(transposed);
+    if (changed) {
+      this.board = this.transpose(transposed);
+      this.addRandomTile();
+      this.checkGameOver();
+    }
   }
 
   moveDown() {
     const transposed = this.transpose(this.board);
+    const changed = this.handleMove(transposed, true);
 
-    this.handleMove(transposed, true);
-
-    this.board = this.transpose(transposed);
+    if (changed) {
+      this.board = this.transpose(transposed);
+      this.addRandomTile();
+      this.checkGameOver();
+    }
   }
 
   handleMove(grid, reverse) {
+    let changed = false;
+
     for (let i = 0; i < this.size; i++) {
       const row = [...grid[i]];
 
@@ -93,11 +112,11 @@ class Game {
 
       if (!this.arraysEqual(newRow, grid[i])) {
         grid[i] = newRow;
+        changed = true;
       }
     }
 
-    this.addRandomTile();
-    this.checkGameOver();
+    return changed;
   }
 
   transpose(matrix) {
